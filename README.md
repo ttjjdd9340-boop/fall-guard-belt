@@ -66,11 +66,19 @@ fall-guard-belt/
 ├── firestore_detection.py     # 메인 실시간 감지 코드 (약 850줄)
 ├── data_collection.py         # 직접 데이터 수집 코드
 ├── retrain_xgboost.py         # 재학습 코드
-├── firebase_key.json          # Firebase 인증 (비공개)
-├── xgb_model.pkl              # XGBoost 학습된 모델
-├── xgb_direction_model.pkl    # 방향 분류 모델
-└── xgb_feature_cols.pkl       # Feature 컬럼 목록
+├── requirements.txt           # 패키지 목록
+└── .gitignore                 # 비공개·대용량 파일 제외 규칙
 ```
+
+아래 파일은 `.gitignore`로 제외되어 레포에 포함되지 않습니다. 실행하려면 직접 준비해야 합니다.
+
+| 파일 | 설명 | 제외 이유 |
+|---|---|---|
+| `firebase_key.json` | Firebase 서비스 계정 키 | 🔒 보안 |
+| `xgb_model.pkl` | XGBoost 낙상 감지 모델 | 📦 용량 |
+| `xgb_direction_model.pkl` | 낙상 방향 분류 모델 | 📦 용량 |
+| `xgb_feature_cols.pkl` | Feature 컬럼 목록 | 📦 용량 |
+| `*.csv` | 학습/수집 데이터셋 | 📦 용량 |
 
 ---
 

@@ -1,0 +1,8 @@
+# 보안: Firebase 서비스 계정 비공개 키 — 유출되면 누구나 Firestore DB를 읽고 쓸 수 있음
+firebase_key.json
+
+# 용량: 학습된 XGBoost 모델 파일(pickle) — 바이너리라 크고 재학습할 때마다 바뀜
+*.pkl
+
+# 용량: 학습/수집 데이터셋 — 22만 개 이상 샘플이라 GitHub에 올리기엔 너무 큼
+*.csv

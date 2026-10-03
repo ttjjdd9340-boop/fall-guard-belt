@@ -1,0 +1,9 @@
+firebase-admin
+numpy
+pandas
+scikit-learn
+xgboost
+smbus2
+pyserial
+pynmea2
+lgpio

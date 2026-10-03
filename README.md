@@ -78,7 +78,7 @@ fall-guard-belt/
 
 ```bash
 # 패키지 설치
-pip install firebase-admin numpy pandas scikit-learn smbus2 pyserial pynmea2 lgpio --break-system-packages
+pip install -r requirements.txt --break-system-packages
 
 # 실행
 python3 firestore_detection.py

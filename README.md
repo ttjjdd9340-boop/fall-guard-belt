@@ -63,7 +63,7 @@ Firebase Firestore → Fall Guard 대시보드 (카카오맵)
 
 ```
 fall-guard-belt/
-├── firestore_detection.py     # 메인 실시간 감지 코드 (약 850줄)
+├── firestore_detection.py     # 메인 실시간 감지 코드 (약 970줄)
 ├── data_collection.py         # 직접 데이터 수집 코드
 ├── retrain_xgboost.py         # 재학습 코드
 ├── requirements.txt           # 패키지 목록
@@ -112,10 +112,10 @@ python3 firestore_detection.py
 | 2위 | AccY_mean | 11.12% |
 | 3위 | GyrX_peak | 7.54% |
 
-### 전이학습 방식 재학습
+### 직접 측정 데이터를 합쳐 재학습
 
 공개 데이터셋(실험실 환경) 1차 학습 후,  
-실제 벨트 착용 데이터 350개를 직접 수집해 재학습 → 민감도 **+2.26%** 향상
+실제 벨트 착용 데이터 350개를 직접 수집해 재학습
 
 ---
 
@@ -184,7 +184,7 @@ alerts/{event_id}
 
 ## 🔮 향후 계획
 
-- [ ] 낙상 데이터 직접 수집 후 재재학습
+- [ ] 낙상 데이터 직접 수집 후 재학습
 - [ ] FCM 푸시 알림 (보호자 핸드폰)
 - [ ] 경량화: ESP32/STM32 전용 MCU 교체
 - [ ] AI 경량화: XGBoost → TensorFlow Lite

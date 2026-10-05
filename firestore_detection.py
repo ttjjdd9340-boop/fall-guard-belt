@@ -14,7 +14,7 @@
   └── combined_features.csv   (시뮬레이션 모드 시 필요)
 
 실행: python3 firestore_detection.py
-필요: pip install firebase-admin numpy pandas scikit-learn smbus2 pyserial pynmea2 --break-system-packages
+필요: pip install -r requirements.txt
 """
 
 import os, time, pickle, threading
@@ -394,7 +394,7 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
     """
     낙상 방향별 부상 위험도 계산 (논문을 참고한 레벨 시스템)
     ─────────────────────────────────────────────────────
-    근거 논문:
+    참고 논문:
     1. Nevitt & Cummings (1993) J Am Geriatr Soc 41:1226-1234
        - 고령 여성 대상. 고관절 골절은 옆으로 넘어지거나 곧장 주저앉듯
          넘어질 때, 고관절 부위 충격 시 많았음

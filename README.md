@@ -18,7 +18,7 @@ MPU-6050 센서와 XGBoost AI로 낙상을 실시간 감지하고,
 |---|---|
 | 민감도 (Recall) | **92.79%** |
 | AUC-ROC | **99.50%** |
-| 학습 데이터 | 226,059개 (KFall + SisFall + 직접 측정) |
+| 학습 데이터 | 공개 데이터셋 226,059개(KFall + SisFall) + 직접 측정 350개 |
 | 수상 | WON+PBL 챌린지 2026 3등 🥉 |
 
 ---
@@ -82,11 +82,23 @@ fall-guard-belt/
 
 ---
 
+## 🧰 실행 준비
+
+- `firebase_key.json`, `xgb_model.pkl`, `xgb_direction_model.pkl`, `xgb_feature_cols.pkl`을 `firestore_detection.py`와 **같은 폴더**에 둡니다.
+- `retrain_xgboost.py`의 결과물은 `XGBoost_Model` 폴더에 저장됩니다. 재학습 후에는 생성된 pkl 파일들을 `firestore_detection.py`가 있는 폴더로 복사하세요.
+- 재학습에는 `combined_features.csv`와 `custom_data_*.csv`가 필요합니다.
+
+---
+
 ## ⚙️ 설치 및 실행
 
 ```bash
+# 가상환경 생성 및 활성화
+python3 -m venv .venv
+source .venv/bin/activate
+
 # 패키지 설치
-pip install -r requirements.txt --break-system-packages
+pip install -r requirements.txt
 
 # 실행
 python3 firestore_detection.py
@@ -125,15 +137,15 @@ python3 firestore_detection.py
 
 | 논문 | 핵심 수치 |
 |---|---|
-| Nevitt & Cummings (1993) JAGS | 옆 낙상 → 고관절 **6배** / 뒤 낙상 → 손목 **OR 2.2** |
+| Nevitt & Cummings (1993) JAGS | 고령 여성 대상. 고관절 골절은 옆으로 넘어지거나 곧장 주저앉듯 넘어질 때(OR 3.3)와 고관절 부위 충격(OR 32.5), 손목 골절은 뒤로 넘어질 때(OR 2.2)에 많았음 |
 | Berry & Miller (2008) PMC2793090 | 뒤 낙상 시 엉덩이 연부조직 충격 흡수 |
-| Greenspan et al. (1994) JAMA | 옆 낙상 → 고관절 **OR 5.7** |
-| PMC2562433 | 뒤 낙상 → 고관절 충격 **OR 12.6** |
+| Greenspan et al. (1994) JAMA | 65세 이상 낙상자 대상. 낙상 방향(OR 5.7), 골밀도, 낙상 시 위치에너지, 체질량지수가 고관절 골절의 독립 위험요인 |
+| PMC2562433 | 원문 확인 필요 |
 | PMC3624001 | 선형+회전 가속도 복합 → 뇌진탕 위험 |
 
 **판단 기준:**
-- 방향별 기본 위험 레벨 (논문 OR값 기반)
-- 나이 보정: 75세↑ +2단계 / 65~74세 +1단계 (WHO 기준)
+- 방향별 기본 위험 레벨 (논문 결과를 참고해 직접 설정)
+- 나이 보정: 75세↑ +2단계 / 65~74세 +1단계 (고령일수록 골밀도가 낮아지는 점을 반영한 자체 규칙)
 - 충격 보정: 5g↑ +1단계 / 1g↓ -1단계
 
 **위험 등급:** 낮음 / 보통 / 높음 / 매우높음 (4단계)
@@ -182,6 +194,15 @@ alerts/{event_id}
 
 ---
 
+## ⚠️ 한계
+
+- 직접 측정 데이터는 일상 동작만 포함합니다. 낙상 데이터는 안전상 매트 위에서만 수집할 수 있었습니다.
+- 실시간 감지에는 저역통과 필터를 쓰지만, 직접 측정한 학습 데이터에는 적용하지 않았습니다.
+- 부상 위험도는 논문 결과를 참고한 자체 규칙이며 임상 검증을 거치지 않았습니다.
+- 배터리 잔량은 시뮬레이션 값입니다.
+
+---
+
 ## 🔮 향후 계획
 
 - [ ] 낙상 데이터 직접 수집 후 재학습
@@ -204,4 +225,5 @@ alerts/{event_id}
 
 ## 📄 노션 포트폴리오
 
-🔗 [상세 포트폴리오 보기](https://www.notion.so/373ab46034fc81f0888fe5d81d2c1c60)
+- 🔗 [요약](https://app.notion.com/p/3efab46034fc8166a583c7a371cb55be)
+- 🔗 [상세 기록](https://app.notion.com/p/38aab46034fc8168ad4add3e5747b013)

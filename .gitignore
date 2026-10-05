@@ -6,3 +6,9 @@ firebase_key.json
 
 # 용량: 학습/수집 데이터셋 — 22만 개 이상 샘플이라 GitHub에 올리기엔 너무 큼
 *.csv
+
+# Python 캐시/가상환경/OS 파일
+__pycache__/
+*.pyc
+.venv/
+.DS_Store

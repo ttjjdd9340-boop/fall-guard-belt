@@ -396,9 +396,9 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
     ─────────────────────────────────────────────────────
     근거 논문:
     1. Nevitt & Cummings (1993) J Am Geriatr Soc 41:1226-1234
-       - 옆으로 낙상 → 고관절 골절 위험 6배↑ (앞/뒤 대비)
-       - 뒤로 낙상   → 손목 골절 OR 2.2 (95% CI 1.3~3.8)
-       - 앞으로 낙상 → 손목 골절 OR 1.73 (95% CI 1.12~2.67)
+       - 고령 여성 대상. 고관절 골절은 옆으로 넘어지거나 곧장 주저앉듯
+         넘어질 때, 고관절 부위 충격 시 많았음
+       - 손목 골절은 뒤로 넘어질 때 많았음
 
     2. Berry & Miller (2008) Curr Osteoporos Rep (PMC2793090)
        - 옆으로 낙상 → 고관절 골절과 가장 강한 연관
@@ -406,12 +406,12 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
          → 옆으로 낙상보다 고관절 골절 위험 낮음
 
     3. Greenspan et al. (1994) JAMA 271:128-133
-       - 낙상 충격 세기 + 골밀도가 고관절 골절 주요 예측인자
-       - 옆으로 낙상 → 고관절 골절 위험 5.7배 (Greenspan 1998 AJM)
+       - 65세 이상 낙상자 대상. 낙상 방향, 골밀도, 낙상 시 위치에너지,
+         체질량지수가 고관절 골절의 독립 위험요인
 
     4. PMC2562433 (Hayes et al. 충격 위험 지수 기반)
        - 옆으로 낙상 시 대전자부 직접 충격 → 최고 위험
-       - 뒤로 낙상 시 고관절/골반 충격 OR 12.6 (95% CI 4.7~33.8)
+       - 뒤로 낙상 시 고관절/골반 충격 수치는 원문 확인 필요
 
     5. PMC3624001 (뇌진탕 복합 위험 지수)
        - 선형 + 회전 가속도 모두 뇌진탕 위험에 기여
@@ -419,13 +419,13 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
 
     ─────────────────────────────────────────────────────
     위험 레벨 정의:
-      매우높음: 즉각 의료 개입 필요 (OR 5배 이상 또는 나이+충격 복합)
-      높음:     빠른 의료 확인 필요 (OR 2~5배)
-      보통:     병원 방문 권장 (OR 1.5~2배)
-      낮음:     모니터링 (OR 1.5배 미만)
+      매우높음: 즉각 의료 개입 필요 (나이+충격 복합 등)
+      높음:     빠른 의료 확인 필요
+      보통:     병원 방문 권장
+      낮음:     모니터링
 
     판단 보정 요소:
-    ① 나이 보정 (WHO 골다공증 기준)
+    ① 나이 보정 (자체 규칙: 고령일수록 골밀도가 낮아지는 점 반영)
        - 75세 이상 → 레벨 2단계 상향 (골밀도 현저 저하)
        - 65~74세   → 레벨 1단계 상향 (골밀도 저하 시작)
        - 65세 미만 → 보정 없음
@@ -447,7 +447,7 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
     def get_level(base_level, age, acc, gyr, injury_type="fracture"):
         """
         base_level: 0~3 (낮음~매우높음)
-        논문 OR 기반 기본값 + 나이/충격 보정
+        논문 결과를 참고해 직접 설정한 기본값 + 나이/충격 보정
 
         보정 원칙:
         - 나이는 항상 상향 보정 (골밀도 저하)
@@ -457,7 +457,7 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
         """
         level = base_level
 
-        # ① 나이 보정 (WHO 골다공증 기준)
+        # ① 나이 보정 (자체 규칙)
         if age >= 75:
             level += 2   # 75세 이상: 골밀도 현저 저하
         elif age >= 65:
@@ -485,11 +485,11 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
 
     if direction == 0:
         # ── 앞으로 낙상 ──────────────────────────────────────
-        # Nevitt 1993: 손목 OR 1.73 → 기본 보통(1)
+        # 논문 결과를 참고해 직접 설정한 기본 레벨 → 보통(1)
         # 65세 이상이면 자동으로 높음
         # 75세 이상이면 자동으로 매우높음
         risk["손목_골절"]   = get_level(1, age, acc_max, gyr_max)
-        # Nevitt 1993 OR 1.73 (95% CI 1.12~2.67) → 기본 보통(1)
+        # 논문 결과를 참고해 직접 설정한 기본 레벨 → 보통(1)
 
         risk["뇌진탕"]      = get_level(0, age, acc_max, gyr_max, "brain")
         # 앞으로 낙상 시 머리 충격 낮음 → 기본 낮음(0)
@@ -498,7 +498,7 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
         # 척추 전방 압박 가능 → 기본 보통(1)
 
         risk["고관절_골절"] = get_level(0, age, acc_max, gyr_max)
-        # Nevitt 1993: 앞으로 낙상 고관절 위험 낮음 → 기본 낮음(0)
+        # 앞으로 낙상 고관절 위험 낮음 → 기본 낮음(0)
 
         risk["어깨_부상"]   = get_level(0, age, acc_max, gyr_max)
         # 팔로 짚는 경우 → 기본 낮음(0)
@@ -507,7 +507,7 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
         # ── 뒤로 낙상 ──────────────────────────────────────
         # [변경 없음] 기본값 그대로 유지
         risk["고관절_골절"] = get_level(2, age, acc_max, gyr_max)
-        # PMC2562433 OR 12.6 (골반 충격), 연부조직 흡수 반영 → 기본 높음(2)
+        # 논문 결과를 참고해 직접 설정한 기본 레벨 (연부조직 흡수 반영) → 높음(2)
 
         risk["허리_부상"]   = get_level(2, age, acc_max, gyr_max)
         # 뒤로 넘어질 때 척추 압박 위험 높음 → 기본 높음(2)
@@ -516,7 +516,7 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
         # 후두부 충격 가능 → 기본 보통(1)
 
         risk["손목_골절"]   = get_level(1, age, acc_max, gyr_max)
-        # Nevitt 1993 OR 2.2 (95% CI 1.3~3.8) → 기본 보통(1)
+        # 논문 결과를 참고해 직접 설정한 기본 레벨 → 보통(1)
 
         risk["어깨_부상"]   = get_level(0, age, acc_max, gyr_max)
         # 뒤로 낙상 시 어깨 위험 낮음 → 기본 낮음(0)
@@ -525,10 +525,10 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
         # ── 옆으로 낙상 ──────────────────────────────────────
         # [변경 없음] 기본값 그대로 유지
         risk["고관절_골절"] = get_level(3, age, acc_max, gyr_max)
-        # Nevitt 1993 6배, Greenspan OR 5.7 → 기본 매우높음(3)
+        # 논문 결과를 참고해 직접 설정한 기본 레벨 → 매우높음(3)
 
         risk["어깨_부상"]   = get_level(2, age, acc_max, gyr_max)
-        # PMC2562433 대전자부 충격 OR 4.0 → 기본 높음(2)
+        # 논문 결과를 참고해 직접 설정한 기본 레벨 → 높음(2)
 
         risk["뇌진탕"]      = get_level(1, age, acc_max, gyr_max, "brain")
         # 측두부 충격 가능 → 기본 보통(1)

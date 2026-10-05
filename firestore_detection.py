@@ -392,7 +392,7 @@ def to_python_type(obj):
 
 def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
     """
-    낙상 방향별 부상 위험도 계산 (논문 기반 레벨 시스템)
+    낙상 방향별 부상 위험도 계산 (논문을 참고한 레벨 시스템)
     ─────────────────────────────────────────────────────
     근거 논문:
     1. Nevitt & Cummings (1993) J Am Geriatr Soc 41:1226-1234

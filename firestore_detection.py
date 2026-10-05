@@ -401,9 +401,9 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
        - 손목 골절은 뒤로 넘어질 때 많았음
 
     2. Berry & Miller (2008) Curr Osteoporos Rep (PMC2793090)
-       - 옆으로 낙상 → 고관절 골절과 가장 강한 연관
-       - 뒤로 낙상 시 둔부 연부조직이 충격 일부 흡수
-         → 옆으로 낙상보다 고관절 골절 위험 낮음
+       - 고관절 골절은 옆으로 넘어질 때 더 많이 연관됨
+       - 엉덩이로 곧장 떨어질 때는 뒤쪽 연부조직이 충격을 일부 흡수해
+         골절 위험이 낮게 관찰됨(리뷰)
 
     3. Greenspan et al. (1994) JAMA 271:128-133
        - 65세 이상 낙상자 대상. 낙상 방향, 골밀도, 낙상 시 위치에너지,
@@ -505,7 +505,6 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
 
     elif direction == 1:
         # ── 뒤로 낙상 ──────────────────────────────────────
-        # [변경 없음] 기본값 그대로 유지
         risk["고관절_골절"] = get_level(2, age, acc_max, gyr_max)
         # 논문 결과를 참고해 직접 설정한 기본 레벨 (연부조직 흡수 반영) → 높음(2)
 
@@ -523,7 +522,6 @@ def calculate_injury_risk(direction, acc_max, gyr_max, age=65):
 
     elif direction == 2:
         # ── 옆으로 낙상 ──────────────────────────────────────
-        # [변경 없음] 기본값 그대로 유지
         risk["고관절_골절"] = get_level(3, age, acc_max, gyr_max)
         # 논문 결과를 참고해 직접 설정한 기본 레벨 → 매우높음(3)
 

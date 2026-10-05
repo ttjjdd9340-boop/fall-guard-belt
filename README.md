@@ -1,13 +1,13 @@
 # 🛡️ AI 기반 낙상 감지 스마트 벨트 (Fall Guard)
 
 - **문제:** 고령자 낙상은 바로 발견되기 어렵고, 어디를 다쳤는지 몰라 응급 대응이 늦어짐
-- **한 일:** MPU-6050 벨트 센서 + XGBoost 실시간 낙상 감지 모델, 논문 기반 부상 부위 위험도 로직, Firebase 보호자 알림 구현
+- **한 일:** MPU-6050 벨트 센서 + XGBoost 실시간 낙상 감지 모델, 논문을 참고한 부상 부위 위험도 로직, Firebase 보호자 알림 구현
 - **결과:** 민감도 92.79% / AUC-ROC 99.50% 달성, WON+PBL 챌린지 2026 3등 수상
 
 > WON+PBL 챌린지 2026 **3등 수상** 🥉 | 팀명: acu5
 
 MPU-6050 센서와 XGBoost AI로 낙상을 실시간 감지하고,  
-낙상 방향에 따라 **어디가 다쳤는지** 의학 논문 기반으로 자동 계산해  
+낙상 방향에 따라 **어디가 다쳤는지** 의학 논문을 참고해 자동 계산해  
 보호자/의료진에게 즉시 전달하는 스마트 벨트 시스템입니다.
 
 ---
@@ -34,7 +34,7 @@ XGBoost AI 낙상 판단 (확률 90% 이상)
     ↓
 낙상 방향 분류 (앞/뒤/옆)
     ↓
-논문 기반 부상 위험도 계산
+논문을 참고한 부상 위험도 계산
     ↓
 Logic A (즉시) / Logic B (15초 버튼 대기)
     ↓
@@ -52,7 +52,7 @@ Firebase Firestore → Fall Guard 대시보드 (카카오맵)
 - 피에조 부저 (GPIO 27) / 푸시 버튼 (GPIO 17)
 
 ### 소프트웨어
-- Python 3.13 / NumPy / Pandas
+- Python 3 / NumPy / Pandas
 - XGBoost / Scikit-learn
 - Firebase Firestore
 - lgpio / pyserial / pynmea2
@@ -86,7 +86,7 @@ fall-guard-belt/
 
 - `firebase_key.json`, `xgb_model.pkl`, `xgb_direction_model.pkl`, `xgb_feature_cols.pkl`을 `firestore_detection.py`와 **같은 폴더**에 둡니다.
 - `retrain_xgboost.py`의 결과물은 `XGBoost_Model` 폴더에 저장됩니다. 재학습 후에는 생성된 pkl 파일들을 `firestore_detection.py`가 있는 폴더로 복사하세요.
-- 재학습에는 `combined_features.csv`와 `custom_data_*.csv`가 필요합니다.
+- 재학습에는 `combined_features.csv`와 `custom_data_20260520_174846.csv` (`retrain_xgboost.py`의 `CUSTOM_CSV`에 적힌 이름과 같아야 함)가 필요합니다.
 
 ---
 
@@ -114,7 +114,7 @@ python3 firestore_detection.py
 |---|---|---|---|
 | Random Forest | 98.40% | 86.15% | 99.16% |
 | **XGBoost ★** | **98.61%** | **90.53%** | **99.38%** |
-| XGBoost (재학습 후) | 98.40% | **92.79%** | **99.50%** |
+| XGBoost (재학습 후) | — | **92.79%** | **99.50%** |
 
 ### Feature 중요도 TOP 3
 
@@ -131,7 +131,7 @@ python3 firestore_detection.py
 
 ---
 
-## 🩺 논문 기반 부상 위험도 로직
+## 🩺 논문을 참고한 부상 위험도 로직
 
 낙상 방향별로 어디가 위험한지 의학 논문 5편을 참고해 자동 계산합니다.
 
@@ -213,7 +213,9 @@ alerts/{event_id}
 
 ---
 
-## 👤 개발자
+## 👤 개발 참여자
+
+5인 팀 중 개발에 참여한 3명입니다.
 
 | 이름 | 역할 |
 |---|---|

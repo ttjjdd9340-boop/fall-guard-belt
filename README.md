@@ -136,7 +136,7 @@ python3 firestore_detection.py
 낙상 방향별로 어디가 위험한지 의학 논문 5편을 참고해 자동 계산합니다.
 
 - Nevitt & Cummings (1993), JAGS: 옆으로 또는 곧장 주저앉듯 넘어질 때 고관절 골절, 뒤로 넘어질 때 손목 골절이 많았음 (고령 여성 대상)
-- Berry & Miller (2008), Curr Osteoporos Rep (리뷰): 고관절 골절은 옆으로 넘어질 때 더 밀접
+- Berry & Miller (2008), Curr Osteoporos Rep (리뷰): 고관절 골절은 옆으로 넘어질 때 더 많이 연관됨
 - Greenspan et al. (1994), JAMA: 낙상 방향, 골밀도, 낙상 시 위치에너지 등이 고관절 골절의 위험요인
 - Lo & Ashton-Miller (2008), J Biomech: 충격력과 골절 한계의 비율로 위험을 평가하는 방식 참고
 - Rowson & Duma (2013), Ann Biomed Eng: 선형·회전 가속도를 함께 쓰는 아이디어 참고
@@ -220,8 +220,3 @@ alerts/{event_id}
 | **이상훈 (팀장)** | AI 모델, 데이터 전처리, 실시간 감지 코드, 하드웨어 세팅, 부상 위험도 로직 |
 | 정영진 | 웹 대시보드 (Fall Guard), Firebase 연동, 카카오맵 |
 | 이승호 | 하드웨어 제작, PPT |
-
----
-
-## 노션 포트폴리오
-

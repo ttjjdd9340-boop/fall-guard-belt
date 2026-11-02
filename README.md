@@ -1,10 +1,10 @@
-# 🛡️ AI 기반 낙상 감지 스마트 벨트 (Fall Guard)
+# AI 기반 낙상 감지 스마트 벨트 (Fall Guard)
 
 - **문제:** 고령자 낙상은 바로 발견되기 어렵고, 어디를 다쳤는지 몰라 응급 대응이 늦어짐
 - **한 일:** MPU-6050 벨트 센서 + XGBoost 실시간 낙상 감지 모델, 논문을 참고한 부상 부위 위험도 로직, Firestore 알림 저장 및 웹 대시보드 팝업 연동
-- **결과:** 민감도 92.79% / AUC-ROC 99.50% 달성, WON+PBL 챌린지 2026 3등 수상
+- **결과:** 민감도 92.79% / AUC-ROC 99.50% 달성, 2026 WON+PBL 챌린지 대학혁신단장상(3등) | 팀명: ACU5
 
-> WON+PBL 챌린지 2026 **3등 수상** 🥉 | 팀명: acu5
+> 2026 WON+PBL 챌린지 대학혁신단장상(3등) | 팀명: ACU5
 
 MPU-6050 센서와 XGBoost AI로 낙상을 실시간 감지하고,  
 낙상 방향에 따라 **어디가 다쳤는지** 의학 논문을 참고해 자동 계산해  
@@ -12,18 +12,18 @@ MPU-6050 센서와 XGBoost AI로 낙상을 실시간 감지하고,
 
 ---
 
-## 📌 핵심 성과
+## 성과
 
 | 지표 | 결과 |
 |---|---|
 | 민감도 (Recall) | **92.79%** |
 | AUC-ROC | **99.50%** |
 | 학습 데이터 | 공개 데이터셋 226,059개(KFall + SisFall) + 직접 측정 350개 |
-| 수상 | WON+PBL 챌린지 2026 3등 🥉 |
+| 수상 | 2026 WON+PBL 챌린지 대학혁신단장상(3등) | 팀명: ACU5 |
 
 ---
 
-## 🏗️ 시스템 구조
+## 시스템 구조
 
 ```
 MPU-6050 센서 (100Hz)
@@ -43,7 +43,7 @@ Firebase Firestore → Fall Guard 대시보드 (카카오맵)
 
 ---
 
-## 🛠️ 기술 스택
+## 기술 스택
 
 ### 하드웨어
 - Raspberry Pi 5 4GB
@@ -59,7 +59,7 @@ Firebase Firestore → Fall Guard 대시보드 (카카오맵)
 
 ---
 
-## 📂 파일 구조
+## 파일 구조
 
 ```
 fall-guard-belt/
@@ -74,15 +74,15 @@ fall-guard-belt/
 
 | 파일 | 설명 | 제외 이유 |
 |---|---|---|
-| `firebase_key.json` | Firebase 서비스 계정 키 | 🔒 보안 |
-| `xgb_model.pkl` | XGBoost 낙상 감지 모델 | 📦 용량 |
-| `xgb_direction_model.pkl` | 낙상 방향 분류 모델 | 📦 용량 |
-| `xgb_feature_cols.pkl` | Feature 컬럼 목록 | 📦 용량 |
-| `*.csv` | 학습/수집 데이터셋 | 📦 용량 |
+| `firebase_key.json` | Firebase 서비스 계정 키 | 보안 |
+| `xgb_model.pkl` | XGBoost 낙상 감지 모델 | 용량 |
+| `xgb_direction_model.pkl` | 낙상 방향 분류 모델 | 용량 |
+| `xgb_feature_cols.pkl` | Feature 컬럼 목록 | 용량 |
+| `*.csv` | 학습/수집 데이터셋 | 용량 |
 
 ---
 
-## 🧰 실행 준비
+## 실행 준비
 
 - `firebase_key.json`, `xgb_model.pkl`, `xgb_direction_model.pkl`, `xgb_feature_cols.pkl`을 `firestore_detection.py`와 **같은 폴더**에 둡니다.
 - `retrain_xgboost.py`의 결과물은 `XGBoost_Model` 폴더에 저장됩니다. 재학습 후에는 생성된 pkl 파일들을 `firestore_detection.py`가 있는 폴더로 복사하세요.
@@ -90,7 +90,7 @@ fall-guard-belt/
 
 ---
 
-## ⚙️ 설치 및 실행
+## 설치 및 실행
 
 ```bash
 # 가상환경 생성 및 활성화
@@ -106,14 +106,14 @@ python3 firestore_detection.py
 
 ---
 
-## 🤖 AI 모델
+## AI 모델
 
 ### 모델 비교
 
 | 모델 | 민감도 | AUC-ROC |
 |---|---|---|
 | Random Forest | 86.15% | 99.16% |
-| **XGBoost ★** | **90.53%** | **99.38%** |
+| **XGBoost** | **90.53%** | **99.38%** |
 | XGBoost (재학습 후) | **92.79%** | **99.50%** |
 
 ### Feature 중요도 TOP 3
@@ -131,17 +131,15 @@ python3 firestore_detection.py
 
 ---
 
-## 🩺 논문을 참고한 부상 위험도 로직
+## 논문을 참고한 부상 위험도 로직
 
 낙상 방향별로 어디가 위험한지 의학 논문 5편을 참고해 자동 계산합니다.
 
-| 논문 | 핵심 수치 |
-|---|---|
-| Nevitt & Cummings (1993) JAGS | 고령 여성 대상. 고관절 골절은 옆으로 넘어지거나 곧장 주저앉듯 넘어질 때(OR 3.3)와 고관절 부위 충격(OR 32.5), 손목 골절은 뒤로 넘어질 때(OR 2.2)에 많았음 |
-| Berry & Miller (2008) PMC2793090 | 고관절 골절은 옆으로 넘어질 때 더 많이 연관됨. 엉덩이로 곧장 떨어질 때는 뒤쪽 연부조직이 충격을 일부 흡수해 골절 위험이 낮게 관찰됨(리뷰) |
-| Greenspan et al. (1994) JAMA | 65세 이상 낙상자 대상. 낙상 방향(OR 5.7), 골밀도, 낙상 시 위치에너지, 체질량지수가 고관절 골절의 독립 위험요인 |
-| Lo & Ashton-Miller (2008) J Biomech, PMC2562433 | 옆으로 넘어질 때 낙하 전략에 따라 고관절 충격력이 최대 56% 감소. 충격력과 골절 한계의 비율로 위험을 평가하는 방식을 참고 (모의실험 연구) |
-| Rowson & Duma (2013) Ann Biomed Eng, PMC3624001 | 머리의 선형·회전 가속도를 함께 쓰면 뇌진탕 예측에 유리하다는 아이디어를 참고 (미식축구 헬멧 데이터 기반, 임계값은 직접 설정) |
+- Nevitt & Cummings (1993), JAGS: 옆으로 또는 곧장 주저앉듯 넘어질 때 고관절 골절, 뒤로 넘어질 때 손목 골절이 많았음 (고령 여성 대상)
+- Berry & Miller (2008), Curr Osteoporos Rep (리뷰): 고관절 골절은 옆으로 넘어질 때 더 밀접
+- Greenspan et al. (1994), JAMA: 낙상 방향, 골밀도, 낙상 시 위치에너지 등이 고관절 골절의 위험요인
+- Lo & Ashton-Miller (2008), J Biomech: 충격력과 골절 한계의 비율로 위험을 평가하는 방식 참고
+- Rowson & Duma (2013), Ann Biomed Eng: 선형·회전 가속도를 함께 쓰는 아이디어 참고
 
 **판단 기준:**
 - 방향별 기본 위험 레벨 (논문 결과를 참고해 직접 설정)
@@ -152,7 +150,7 @@ python3 firestore_detection.py
 
 ---
 
-## 🔧 오탐 방지 Logic A/B
+## 오탐 방지 Logic A/B
 
 ```python
 if acc_max >= 2.5 or gyr_max >= 200:
@@ -165,7 +163,7 @@ else:
 
 ---
 
-## 🔥 Firebase 데이터 구조
+## Firebase 데이터 구조
 
 ```
 patients/{patient_id}
@@ -185,7 +183,7 @@ alerts/{event_id}
 
 ---
 
-## 🌐 Fall Guard 모니터링 대시보드
+## Fall Guard 모니터링 대시보드
 
 - React + Firebase Firestore 실시간 연동
 - 카카오맵 API — 낙상 위치 실시간 표시
@@ -194,7 +192,7 @@ alerts/{event_id}
 
 ---
 
-## ⚠️ 한계
+## 한계
 
 - 직접 측정 데이터는 일상 동작만 포함합니다. 낙상 데이터는 안전상 매트 위에서만 수집할 수 있었습니다.
 - 실시간 감지에는 저역통과 필터를 쓰지만, 직접 측정한 학습 데이터에는 적용하지 않았습니다.
@@ -203,7 +201,7 @@ alerts/{event_id}
 
 ---
 
-## 🔮 향후 계획
+## 향후 계획
 
 - [ ] 낙상 데이터 직접 수집 후 재학습
 - [ ] FCM 푸시 알림 (보호자 핸드폰)
@@ -213,7 +211,7 @@ alerts/{event_id}
 
 ---
 
-## 👤 개발 참여자
+## 개발 참여자
 
 5인 팀 중 개발에 참여한 3명입니다.
 
@@ -225,7 +223,5 @@ alerts/{event_id}
 
 ---
 
-## 📄 노션 포트폴리오
+## 노션 포트폴리오
 
-- 🔗 [요약](https://app.notion.com/p/3efab46034fc8166a583c7a371cb55be)
-- 🔗 [상세 기록](https://app.notion.com/p/38aab46034fc8168ad4add3e5747b013)

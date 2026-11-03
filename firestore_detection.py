@@ -24,7 +24,7 @@ try:
     lgpio.gpio_claim_input(_chip, 17, lgpio.SET_PULL_UP)  # 17번 핀 버튼
     lgpio.gpio_claim_output(_chip, 27, 0)                  # 27번 핀 피에조 부저
     GPIO_AVAILABLE = True
-    print("  GPIO 버튼 + 피에조 부저 초기화 완료 ✅")
+    print("  GPIO 버튼 + 피에조 부저 초기화 완료")
 except Exception as e:
     GPIO_AVAILABLE = False
     _chip = None
@@ -36,7 +36,7 @@ from firebase_admin import credentials, firestore
 from datetime import datetime
 
 # ──────────────────────────────────────────────────────────
-# ★ 모드 설정 ★
+# 모드 설정
 # True  = 시뮬레이션 모드 (데이터셋으로 테스트)
 # False = 실제 센서 모드  (MPU-6050 + NEO-6M GPS)
 # ──────────────────────────────────────────────────────────
@@ -121,14 +121,14 @@ class GPSReader:
                     break
 
             if not found_port:
-                print(f"  ❌ 아두이노 USB 포트를 찾을 수 없음")
+                print(f"  아두이노 USB 포트를 찾을 수 없음")
                 print(f"  → 아두이노 USB 연결 확인 후 재시작")
                 self._running = False
                 return
 
             print(f"  GPS 포트 ({found_port}) 연결 시도 중...")
             self._serial = serial.Serial(found_port, GPS_BAUDRATE, timeout=2)
-            print(f"  GPS 포트 열림 ✅")
+            print(f"  GPS 포트 열림")
 
             # 실제 GPS 데이터 수신 확인 (최대 10초 대기)
             print("  GPS 센서 데이터 확인 중... (최대 10초)")
@@ -144,24 +144,24 @@ class GPSReader:
                 self._running = True
                 self._thread  = threading.Thread(target=self._read_loop, daemon=True)
                 self._thread.start()
-                print("  ✅ GPS 센서 감지됨! 실외에서 위성 신호 수신 시 위치 저장")
-                print("  ⚠️  실내에서는 GPS 신호 없음 (실외로 나가면 자동으로 잡힘)")
+                print("  GPS 센서 감지됨! 실외에서 위성 신호 수신 시 위치 저장")
+                print("  실내에서는 GPS 신호 없음 (실외로 나가면 자동으로 잡힘)")
             else:
                 self._serial.close()
                 self._running = False
-                print("  ❌ GPS 센서 없음 (포트는 열렸지만 데이터 없음)")
+                print("  GPS 센서 없음 (포트는 열렸지만 데이터 없음)")
                 print("  → GPS 없이 실행 (위치 정보 미포함)")
 
         except serial.SerialException as e:
-            print(f"  ❌ GPS 포트 연결 실패: {found_port} 포트를 열 수 없음")
+            print(f"  GPS 포트 연결 실패: {found_port} 포트를 열 수 없음")
             print(f"  → GPS 센서가 연결되지 않았거나 포트가 다름")
             print(f"  → GPS 없이 실행 (위치 정보 미포함)")
             self._running = False
         except ImportError:
-            print(f"  ❌ pyserial 미설치 → pip install pyserial --break-system-packages")
+            print(f"  pyserial 미설치 → pip install pyserial --break-system-packages")
             self._running = False
         except Exception as e:
-            print(f"  ❌ GPS 오류: {e}")
+            print(f"  GPS 오류: {e}")
             print(f"  → GPS 없이 실행 (위치 정보 미포함)")
             self._running = False
 
@@ -257,9 +257,9 @@ def buzz(pattern="short"):
 def update_battery(db, patient_id, level):
     """배터리 잔량 터미널 출력만 (Firebase 전송 안 함 → 사용량 절약)"""
     if level <= 5:
-        print(f"\n  🔴 배터리 위급! {level}%")
+        print(f"\n  배터리 위급! {level}%")
     elif level <= 20:
-        print(f"\n  🟡 배터리 부족! {level}%")
+        print(f"\n  배터리 부족! {level}%")
 
 def wait_for_button(seconds):
     """
@@ -268,13 +268,13 @@ def wait_for_button(seconds):
     GPIO 없으면 즉시 False 리턴 → 바로 전송
     """
     if not GPIO_AVAILABLE:
-        print("  ⚠️  GPIO 없음 → 즉시 전송")
+        print("  GPIO 없음 → 즉시 전송")
         return False
 
     start = time.time()
     while time.time() - start < seconds:
         remaining = seconds - (time.time() - start)
-        print(f"  ⏳ 취소 버튼 대기 중... {remaining:.0f}초 남음", end="\r")
+        print(f"  취소 버튼 대기 중... {remaining:.0f}초 남음", end="\r")
         if lgpio.gpio_read(_chip, BUTTON_PIN) == 0:  # 버튼 눌림
             print()
             return True
@@ -675,7 +675,7 @@ def run_simulation(db, model, dir_model, feat_cols):
         pred      = model.predict(X)[0]
         prob      = model.predict_proba(X)[0][1]
         direction = int(dir_model.predict(X)[0]) if pred == 1 else -1
-        match     = "✅" if int(pred) == int(row["is_fall"]) else "❌"
+        match     = "O" if int(pred) == int(row["is_fall"]) else "X"
 
         if pred == 1:
             fall_count += 1
@@ -684,7 +684,7 @@ def run_simulation(db, model, dir_model, feat_cols):
             gyr_max  = float(row["gyr_resultant_max"])
             risk     = calculate_injury_risk(direction, acc_max, gyr_max, PATIENT_INFO["age"])
 
-            print(f"🚨 낙상 감지! ({prob*100:.1f}%) {dir_str} {match}")
+            print(f"낙상 감지! ({prob*100:.1f}%) {dir_str} {match}")
             print(f"         충격: {acc_max:.2f}g | 회전: {gyr_max:.1f}°/s | 위험등급: {risk['위험_등급']}")
             for k, v in risk.items():
                 if k != "위험_등급":
@@ -707,7 +707,7 @@ def run_simulation(db, model, dir_model, feat_cols):
                 "model_used": MODEL_NAME
             }
             event_id = save_to_firestore(db, fall_data, risk)
-            print(f"         Firestore 전송 완료: {event_id} ✅")
+            print(f"         Firestore 전송 완료: {event_id}")
         else:
             print(f"정상 (ADL) ({prob*100:.1f}%) {match}")
 
@@ -752,7 +752,7 @@ def run_real_sensor(db, model, dir_model, feat_cols, gps):
     battery_timer   = time.time()
 
     # 배터리: Firebase 전송 없이 터미널 출력만 (사용량 절약)
-    print(f"  🔋 배터리: {battery_level}%")
+    print(f"  배터리: {battery_level}%")
 
     try:
         while True:
@@ -794,7 +794,7 @@ def run_real_sensor(db, model, dir_model, feat_cols, gps):
                     medical_history = PATIENT_INFO.get("medical_history", "없음") if PATIENT_INFO else "없음"
                     first_aid = get_first_aid_guide(direction, risk, medical_history)
 
-                    print(f"\n[{now}] 🚨 낙상 감지! ({prob*100:.1f}%)")
+                    print(f"\n[{now}] 낙상 감지! ({prob*100:.1f}%)")
                     print(f"  방향:     {dir_str}")
                     print(f"  충격:     {acc_max:.2f}g | 회전: {gyr_max:.1f}°/s")
                     print(f"  위험등급: {risk['위험_등급']}")
@@ -809,22 +809,22 @@ def run_real_sensor(db, model, dir_model, feat_cols, gps):
 
                     # ── Logic A: 심각한 낙상 → 즉시 알림 ──
                     if acc_max >= IMMEDIATE_ACC or gyr_max >= IMMEDIATE_GYR:
-                        print(f"  ⚡ [Logic A] 심각한 낙상 → 즉시 알림!")
+                        print(f"  [Logic A] 심각한 낙상 → 즉시 알림!")
                         buzz("urgent")
                         is_confirmed = True
 
                     # ── Logic B: 경미한 낙상 → 버튼 대기 (DEMO_MODE 시 스킵) ──
                     elif DEMO_MODE:
-                        print(f"  ⚡ [시연 모드] 오탐 취소 기능 비활성화 → 즉시 전송!")
+                        print(f"  [시연 모드] 오탐 취소 기능 비활성화 → 즉시 전송!")
                         buzz("urgent")
                         is_confirmed = True
                     else:
-                        print(f"  ⏳ [Logic B] 경미한 낙상 → 15초 내 버튼 누르면 취소!")
+                        print(f"  [Logic B] 경미한 낙상 → 15초 내 버튼 누르면 취소!")
                         buzz("short")
                         cancelled = wait_for_button(BUTTON_WAIT_SEC)
 
                         if cancelled:
-                            print(f"  ✅ 버튼 눌림 → 오탐으로 처리! Firebase에 기록")
+                            print(f"  버튼 눌림 → 오탐으로 처리! Firebase에 기록")
                             db.collection("false_alarms").document().set({
                                 "timestamp":  datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                                 "patient_id": PATIENT_ID,
@@ -838,14 +838,14 @@ def run_real_sensor(db, model, dir_model, feat_cols, gps):
                             time.sleep(COOLDOWN_SEC)
                             continue
                         else:
-                            print(f"  🚨 응답 없음 → 진짜 낙상으로 처리!")
+                            print(f"  응답 없음 → 진짜 낙상으로 처리!")
                             is_confirmed = True
 
                     # ── 낙상 확정 → Firebase 전송 ──
                     if is_confirmed:
                         fall_count += 1
                         if location["gps_valid"]:
-                            print(f"  위치:     위도 {location['latitude']}, 경도 {location['longitude']} ✅")
+                            print(f"  위치:     위도 {location['latitude']}, 경도 {location['longitude']}")
                         else:
                             print(f"  위치:     GPS 신호 없음 (실내)")
 
@@ -867,13 +867,13 @@ def run_real_sensor(db, model, dir_model, feat_cols, gps):
                             "medical_history":  medical_history,
                         }
                         event_id = save_to_firestore(db, fall_data, risk)
-                        print(f"  Firestore 전송 완료: {event_id} ✅")
+                        print(f"  Firestore 전송 완료: {event_id}")
                         buffer = []
                         for lpf in filters:
                             lpf.reset()
                         time.sleep(COOLDOWN_SEC)
                 else:
-                    print(f"[{now}] 정상 ({prob*100:.1f}%) 🔋{battery_level}%", end="\r")
+                    print(f"[{now}] 정상 ({prob*100:.1f}%) {battery_level}%", end="\r")
 
                 # 배터리 1분마다 1% 감소
                 if time.time() - battery_timer >= BATTERY_INTERVAL:
@@ -903,7 +903,7 @@ try:
     cred = credentials.Certificate(KEY_FILE)
     firebase_admin.initialize_app(cred)
     db = firestore.client()
-    print("  연결 성공! ✅")
+    print("  연결 성공!")
 except Exception as e:
     print(f"  연결 실패: {e}")
     exit()
@@ -913,7 +913,7 @@ print("\n[2] 모델 로딩 중...")
 with open(MODEL_FILE, "rb") as f: model     = pickle.load(f)
 with open(DIR_FILE,   "rb") as f: dir_model = pickle.load(f)
 with open(FEAT_FILE,  "rb") as f: feat_cols = pickle.load(f)
-print("  로딩 완료! ✅")
+print("  로딩 완료!")
 
 # 환자 ID 입력
 print()
@@ -928,7 +928,7 @@ patient_doc = db.collection("patients").document(PATIENT_ID).get()
 
 if patient_doc.exists:
     PATIENT_INFO = patient_doc.to_dict()
-    print(f"  환자: {PATIENT_INFO.get('name', '이름없음')} ({PATIENT_INFO.get('age', 0)}세) ✅")
+    print(f"  환자: {PATIENT_INFO.get('name', '이름없음')} ({PATIENT_INFO.get('age', 0)}세)")
 else:
     # Firebase에 없으면 기본값으로 새로 생성
     print(f"  신규 환자 등록")
@@ -952,7 +952,7 @@ else:
         "blood_type":       blood,
     }
     db.collection("patients").document(PATIENT_ID).set(PATIENT_INFO)
-    print(f"  Firebase에 저장 완료 ✅")
+    print(f"  Firebase에 저장 완료")
 print("=" * 50)
 
 # GPS 초기화

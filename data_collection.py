@@ -211,9 +211,9 @@ while True:
 
         print(f"\n  [{label}] 준비!")
         if is_fall:
-            print(f"  ⚠️  매트 위에서 안전하게 {guide}")
+            print(f"  매트 위에서 안전하게 {guide}")
         else:
-            print(f"  ✅  {guide}")
+            print(f"  {guide}")
 
         data = collect_data(action, is_fall, direction, duration)
         all_data.extend(data)

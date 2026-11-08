@@ -1,7 +1,7 @@
 """
 XGBoost 재학습 코드
 ====================
-기존 combined_features.csv + custom_data.csv 합쳐서 재학습
+기존 combined_features.csv + custom_data_20260520_174846.csv 합쳐서 재학습
 
 실행: python retrain_xgboost.py
 필요: pip install scikit-learn xgboost numpy pandas

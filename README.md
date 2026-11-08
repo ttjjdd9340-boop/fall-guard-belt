@@ -6,7 +6,7 @@
 
 ```mermaid
 flowchart LR
-  A["MPU-6050<br/>100Hz"] --> B["저역통과 필터"]
+  A["MPU-6050<br/>100Hz 목표"] --> B["저역통과 필터"]
   B --> C["1초 윈도우<br/>피처 57개"]
   C --> D["XGBoost 판정<br/>확률 0.90 이상"]
   D --> E["방향 분류<br/>부상 위험도 계산"]
@@ -43,7 +43,7 @@ flowchart LR
 
 - `firebase_key.json`, `xgb_model.pkl`, `xgb_direction_model.pkl`, `xgb_feature_cols.pkl`을 `firestore_detection.py`와 같은 폴더에 둡니다.
 - `retrain_xgboost.py`의 결과물은 `XGBoost_Model` 폴더에 저장됩니다. 재학습 후에는 생성된 pkl 파일들을 `firestore_detection.py`가 있는 폴더로 복사하세요.
-- 재학습에는 `combined_features.csv`와 `custom_data_20260520_174846.csv`(`retrain_xgboost.py`의 `CUSTOM_CSV`에 적힌 이름과 같아야 함)가 필요합니다.
+- 재학습에는 `combined_features.csv`와 `custom_data_20260520_174846.csv`(파일 이름은 `retrain_xgboost.py`의 `CUSTOM_CSV`와 같아야 합니다)가 필요합니다.
 
 ## 설치 및 실행
 

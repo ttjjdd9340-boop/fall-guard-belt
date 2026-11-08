@@ -5,7 +5,7 @@
 MPU-6050 센서로 직접 데이터 수집 후 XGBoost 재학습 가능
 
 실행: python3 data_collection.py
-필요: pip install smbus2 numpy pandas --break-system-packages
+필요: pip install -r requirements.txt
 
 측정 방법:
   ADL → 30초씩 수집 (걷기/앉기/서있기)
